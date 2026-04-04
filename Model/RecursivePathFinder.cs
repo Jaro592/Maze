@@ -9,7 +9,7 @@ namespace Model
         public void FindPath(Maze maze, int[] pos, Queue<int[]> visitedPositions) // akif
         {
             bool[,] visisted = new bool[maze.MazeArray.Length, maze.MazeArray[0].Length]; // new 2d arrey with the same dimensions as the maze to keep track of which cell has been visisted
-            List<int[]> path = new List<int[]>(); // Keepst track of the sequence of coordinates 
+            List<int[]> path = new List<int[]>(); // Keepst track of the sequence of coordinates
             Solve(maze, pos[0], pos[1], visisted, path); // enters the recursion starting from the first coordinate
 
             foreach (var posloop in path) visitedPositions.Enqueue(posloop); // loops through each item in path to put it in a queu
