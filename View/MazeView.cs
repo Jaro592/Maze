@@ -304,100 +304,83 @@ namespace View
             }
         }
 
-        public void DisplayMaze(Maze maze, string[] symbolsArr, int timeInterval, Queue<int[]> visitedPositions, PathFinderType algType = PathFinderType.Manual)
+    public void DisplayMaze(Maze maze, string[] symbolsArr, int timeInterval, Queue<int[]> visitedPositions, PathFinderType algType = PathFinderType.Manual)
+    {
+        var array = maze.MazeMDArray;
+
+        var toBeShownPositions = new Queue<int[]>(visitedPositions);
+        var shownPositions = new Queue<int[]>();
+
+        while (toBeShownPositions.Count > 0)
         {
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.Clear();
 
-            var array = maze.MazeMDArray;
+            var currPos = toBeShownPositions.Dequeue();
+            shownPositions.Enqueue(currPos);
 
-            var toBeShownPositions = new Queue<int[]>(visitedPositions);
-            var shownPositions = new Queue<int[]>();
+            // Print the algorithm header
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3) )}{"  " + algType + "  "}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3))}");
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.WriteLine();
 
-            while (toBeShownPositions.Count > 0)
+            // Loop over the maze
+            for (int rowIdx = 0; rowIdx < array.GetLength(0); rowIdx++)
             {
-                Console.ForegroundColor = ConsoleColor.DarkBlue;
-                Console.BackgroundColor = ConsoleColor.White;
-                Console.Clear();
-
-                var currPos = toBeShownPositions.Dequeue();
-                shownPositions.Enqueue(currPos);
-
-                //Marking strategy:
-
-                // if (array[currPos[0], currPos[1]] == 2)
-                //     array[currPos[0], currPos[1]] = 10;
-                // else
-                //     array[currPos[0], currPos[1]] = 4;
-
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3) )}{"  " + algType + "  "}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3))}");
-                Console.ForegroundColor = ConsoleColor.DarkBlue;
-                Console.BackgroundColor = ConsoleColor.White;
-                Console.WriteLine();
-
-                // Loop over the elements of the maze array
-                // and display as characters.
-                for (int rowIdx = 0; rowIdx < array.GetLength(0); rowIdx++)
+                for (int colIdx = 0; colIdx < array.GetLength(1); colIdx++)
                 {
-                    for (int colIdx = 0; colIdx < array.GetLength(1); colIdx++)
+                    switch (array[rowIdx, colIdx])
                     {
-                        switch (array[rowIdx, colIdx])
-                        {
-                            case -1:
-                                Console.Write("🟦");   //walls
-                                break;
-                            case 1:                    //begin 
-                                if (currPos[0] == rowIdx && currPos[1] == colIdx)
-                                    Console.Write("⚽️");
-                                else
-                                    Console.Write("🏠");
-                                break;
-                            case 2:
-                                if (currPos[0] == rowIdx && currPos[1] == colIdx)
-                                    Console.Write("🏅");    //completed
-                                else
-                                    Console.Write("🍦");    //end                           
-                                break;
-                            case 0:                     //not visited or visited in a not marked array
+                        case -1: // walls
+                            Console.Write("🟦");
+                            break;
+                        case 1: // start
+                            Console.Write(currPos[0] == rowIdx && currPos[1] == colIdx ? "⚽️" : "🏠");
+                            break;
+                        case 2: // end
+                            Console.Write(currPos[0] == rowIdx && currPos[1] == colIdx ? "🏅" : "🍦");
+                            break;
+                        case 0: // not visited / visited
+                        case 4: // visited marking
+                            {
+                                int index = shownPositions.ToList().FindIndex(p => p[0] == rowIdx && p[1] == colIdx);
+
                                 if (currPos[0] == rowIdx && currPos[1] == colIdx)
                                 {
+                                    // Current position
                                     Console.Write("⚽️");
                                 }
-                                else if (shownPositions.Any(_ => _[0] == rowIdx && _[1] == colIdx))
+                                else if (index >= 0)
                                 {
-                                    Console.Write("🏃");
+                                    // Use symbol from symbolsArr based on queue order
+                                    Console.Write(symbolsArr[index % symbolsArr.Length]);
                                 }
                                 else
+                                {
+                                    // Empty space
                                     Console.Write("  ");
-                                break;
-                            //Marking strategy 
-                            case 10:
-                                Console.Write("🏅");    //completed
-                                break;
-                            case 4:
-                                if (currPos[0] == rowIdx && currPos[1] == colIdx)
-                                {
-                                    Console.Write("⚽️");
                                 }
-                                else
-                                {
-                                    Console.Write("🏃");
-                                }
-                                break;
-                            default:
-                                break;
-                        }
+                            }
+                            break;
+                        case 10: // completed
+                            Console.Write("🏅");
+                            break;
                     }
-                    Console.WriteLine("🟦");
                 }
-
-                for (int colIdx = 0; colIdx <= array.GetLength(1); colIdx++)
-                    Console.Write("🟦");
-                Console.WriteLine();
-
-                Thread.Sleep(timeInterval);
-                //Console.Clear();
+                Console.WriteLine("🟦");
             }
+
+            // Bottom wall
+            for (int colIdx = 0; colIdx <= array.GetLength(1); colIdx++)
+                Console.Write("🟦");
+            Console.WriteLine();
+
+            Thread.Sleep(timeInterval);
         }
+    }
 
         public string[] generateSymbols(int spaces)
         {
