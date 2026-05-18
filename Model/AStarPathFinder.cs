@@ -23,7 +23,6 @@ namespace Model
                 int[] current = openset[0];
                 if (current.SequenceEqual(end))
                 {
-                    // reconstruct path
                     var path = new Stack<int[]>();
                     while (cameFrom.ContainsKey(Key(current)))
                     {
