@@ -19,7 +19,6 @@ namespace Model
 
             while (openset.Count > 0)
             {
-                // Dijkstra: pick node with lowest gScore (no heuristic)
                 int[] current = openset.OrderBy(n => gScore.GetValueOrDefault(Key(n), int.MaxValue)).First();
 
                 if (current.SequenceEqual(end))
