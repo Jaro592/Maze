@@ -6,19 +6,14 @@ namespace View
 {
     public class MazeView
     {
-        //View
-    
         public void DisplayMaze(Maze maze)
         {
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.BackgroundColor = ConsoleColor.White;
-            //Console.Clear();
-            var array = maze.MazeArray;
-           
+            var array = maze.MazeArray; // get the 1-D jagged maze grid
+
             Console.WriteLine("\n");
 
-            // Loop over the elements of the maze array
-            // and display as characters.
             for (int rowIdx = 0; rowIdx < array.Length; rowIdx++)
             {
                 var row = array[rowIdx];
@@ -26,34 +21,20 @@ namespace View
                 {
                     switch (row[colIdx])
                     {
-                        case -1:
-                            Console.Write("🟦");   //walls
-                            break;
-                        case 1:
-                            Console.Write("🏠");   //begin 
-                            break;
-                        case 2:
-                            Console.Write("🍦");   //end
-                            break;
-                        case 0:
-                            Console.Write("  ");   //not visited
-                            break;
-                        //Marking strategy
-                        case 10:
-                            Console.Write("🏅");   //completed
-                            break;
-                        case 4:
-                            Console.Write("⚽️");   //visited
-                            break;
-                        default:
-                            break;
+                        case -1: Console.Write("🟦"); break;  // wall
+                        case 1:  Console.Write("🏠"); break;  // start
+                        case 2:  Console.Write("🍦"); break;  // end
+                        case 0:  Console.Write("  "); break;  // unvisited passage
+                        case 10: Console.Write("🏅"); break;  // solved path cell
+                        case 4:  Console.Write("⚽️"); break;  // visited cell
+                        default: break;
                     }
                 }
-                Console.WriteLine("🟦");
+                Console.WriteLine("🟦"); // right border of this row
             }
 
             for (int colIdx = 0; colIdx <= array[0].Length; colIdx++)
-                Console.Write("🟦");
+                Console.Write("🟦"); // bottom border
             Console.WriteLine("\n");
         }
 
@@ -64,8 +45,7 @@ namespace View
             Console.BackgroundColor = ConsoleColor.White;
             Console.Clear();
             var rand = new Random();
-            // Loop over the elements of the maze array
-            // and display as characters.
+
             for (int rowIdx = 0; rowIdx < array.Length; rowIdx++)
             {
                 var row = array[rowIdx];
@@ -74,50 +54,48 @@ namespace View
                     switch (row[colIdx])
                     {
                         case -1:
-                            Console.Write("🟦");   //walls
+                            Console.Write("🟦"); // wall
                             break;
-                        case 1:                    //begin 
+                        case 1:
                             if (currPos[0] == rowIdx && currPos[1] == colIdx)
-                                Console.Write("⚽️");
+                                Console.Write("⚽️"); // player is at start
                             else
-                                Console.Write("🏠");
+                                Console.Write("🏠"); // start tile
                             break;
                         case 2:
-                            Console.Write("🍦");    //end
+                            Console.Write("🍦"); // end tile
                             break;
-                        case 0:                     //not visited
+                        case 0:
                             if (currPos[0] == rowIdx && currPos[1] == colIdx)
-                                Console.Write("⚽️");
+                                Console.Write("⚽️"); // player's current position
                             else
-                                Console.Write("  ");
+                                Console.Write("  "); // unvisited passage
                             break;
-                        //Marking strategy
                         case 10:
-                            Console.Write("🏅");   //completed
+                            Console.Write("🏅"); // solved path cell
                             break;
                         case 4:
                             if (currPos[0] == rowIdx && currPos[1] == colIdx)
-                                Console.Write("⚽️");
+                                Console.Write("⚽️"); // player on a previously visited cell
                             else
                             {
                                 if (rand.NextDouble() < 0.3)
-                                    Console.Write("🦖");
+                                    Console.Write("🦖"); // random decoration for visited cells
                                 else if (rand.NextDouble() >= 0.3 && rand.NextDouble() < 0.6)
                                     Console.Write("🦕");
                                 else
                                     Console.Write("🐈");
                             }
-                            //Console.Write("⚽️");   //visited
                             break;
                         default:
                             break;
                     }
                 }
-                Console.WriteLine("🟦");
+                Console.WriteLine("🟦"); // right border
             }
 
             for (int colIdx = 0; colIdx <= array[0].Length; colIdx++)
-                Console.Write("🟦");
+                Console.Write("🟦"); // bottom border
             Console.WriteLine();
         }
 
@@ -127,16 +105,20 @@ namespace View
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.BackgroundColor = ConsoleColor.White;
             Console.Clear();
-              
+
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3) )}{"  " + algType + "  "}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3))}");
+            Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3) )}{"  " + algType + "  "}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3))}"); // centered algorithm name banner
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.BackgroundColor = ConsoleColor.White;
-        
             System.Console.WriteLine();
 
-            // Loop over the elements of the maze array
-            // and display as characters.
+            var visitedList = visitedPositions.ToList(); // convert queue to list for indexed access
+            int visitedCount = visitedList.Count;
+
+            var positionIndexMap = new Dictionary<string, int>(visitedCount); // maps "row,col" → index in trail
+            for (int i = 0; i < visitedCount; i++)
+                positionIndexMap[$"{visitedList[i][0]},{visitedList[i][1]}"] = i; // 0 = oldest, n-1 = newest
+
             for (int rowIdx = 0; rowIdx < array.Length; rowIdx++)
             {
                 var row = array[rowIdx];
@@ -145,102 +127,101 @@ namespace View
                     switch (row[colIdx])
                     {
                         case -1:
-                            Console.Write("🟦");   //walls
+                            Console.Write("🟦"); // wall
                             break;
-                        case 1:                    //begin 
-                            //if (currPos[0] == rowIdx && currPos[1] == colIdx)
-                            //    Console.Write("⚽️");
-                            //else
-                                Console.Write("🏠");
+                        case 1:
+                            Console.Write("🏠"); // start tile
                             break;
                         case 2:
                             if (currPos[0] == rowIdx && currPos[1] == colIdx)
-                                Console.Write("🏅");    //completed
+                                Console.Write("🏅"); // reached the end
                             else
-                                Console.Write("🍦");    //end     
+                                Console.Write("🍦"); // end tile
                             break;
-                        case 0:                     //not visited
+                        case 0:
                             if (currPos[0] == rowIdx && currPos[1] == colIdx)
-                                Console.Write("⚽️");
-                            else if (visitedPositions.Any(_ => _[0] == rowIdx && _[1] == colIdx))
-                                Console.Write("🏃");  
+                            {
+                                Console.Write("⚽️"); // current head of the path
+                            }
+                            else if (positionIndexMap.TryGetValue($"{rowIdx},{colIdx}", out int posIdx))
+                            {
+                                int symIdx = (visitedCount - 1 - posIdx) % symbolsArr.Length; // newest cell → symbolsArr[0], cycles backward
+                                Console.Write(symbolsArr[symIdx]); // snake-trail symbol for this cell
+                            }
                             else
-                                Console.Write("  ");
+                                Console.Write("  "); // unvisited passage
                             break;
-                        //Marking strategy:
                         case 10:
-                            Console.Write("🏅");    //completed
+                            Console.Write("🏅"); // solved path cell
                             break;
                         case 4:
-                            if (currPos[0] == rowIdx && currPos[1] == colIdx) {
-                                Console.Write("⚽️");
+                            if (currPos[0] == rowIdx && currPos[1] == colIdx)
+                            {
+                                Console.Write("⚽️"); // current head on a marked cell
+                            }
+                            else if (positionIndexMap.TryGetValue($"{rowIdx},{colIdx}", out int posIdx4))
+                            {
+                                int symIdx = (visitedCount - 1 - posIdx4) % symbolsArr.Length; // same cycling formula for marked cells
+                                Console.Write(symbolsArr[symIdx]);
                             }
                             else
                             {
-                                Console.Write("🏃");
+                                Console.Write("🏃"); // marked cell not part of the current trail
                             }
                             break;
                         default:
                             break;
                     }
                 }
-                Console.WriteLine("🟦");
+                Console.WriteLine("🟦"); // right border
             }
 
             for (int colIdx = 0; colIdx <= array[0].Length; colIdx++)
-                Console.Write("🟦");
-            
-            if(algType == PathFinderType.Manual){
+                Console.Write("🟦"); // bottom border
+
+            if (algType == PathFinderType.Manual)
+            {
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.WriteLine("\n\n👉 👉 👉        Press S to go start again.    👈 👈 👈");
                 Console.WriteLine("👉 👉 👉 Press M or ⬅️  to go back to the Menu. 👈 👈 👈\n");
             }
-            
-            if (!maze.IsValidMove(currPos[0], currPos[1], true))
-            {
-                PrintWrongMove(currPos);
-            }
 
-            if (currPos[0] == maze.End[0] && currPos[1] ==maze.End[1]) //completed
+            if (!maze.IsValidMove(currPos[0], currPos[1], true))
+                PrintWrongMove(currPos); // flash an error if the player stepped into a wall
+
+            if (currPos[0] == maze.End[0] && currPos[1] == maze.End[1])
             {
-                //Reset Maze
-                visitedPositions = new Queue<int[]>(); 
+                visitedPositions = new Queue<int[]>(); // reset trail on completion
                 Console.WriteLine("\n");
                 Console.WriteLine("👍 DONE!!! AMAZING!!! 👍");
                 Thread.Sleep(300);
                 return;
-                
             }
-       
         }
 
         public void DisplayMaze(Maze maze, string[] symbolsArr, int timeInterval, Queue<int[]> visitedPositions)
         {
+            var array = maze.MazeMDArray; // 2-D array used by this animated overload
 
-            var array = maze.MazeMDArray;
+            var toBeShownPositions = new Queue<int[]>(visitedPositions); // positions waiting to be animated
+            var shownPositions = new Queue<int[]>();                      // positions already revealed
 
-            var toBeShownPositions = new Queue<int[]>(visitedPositions);
-            var shownPositions = new Queue<int[]>();
-
-            while (toBeShownPositions.Count > 0)
+            while (toBeShownPositions.Count > 0) // one iteration = one animation frame
             {
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.BackgroundColor = ConsoleColor.White;
-                Console.Clear();
+                Console.Clear(); // wipe previous frame
 
-                var currPos = toBeShownPositions.Dequeue();
-                shownPositions.Enqueue(currPos);
+                var currPos = toBeShownPositions.Dequeue(); // reveal the next cell this frame
+                shownPositions.Enqueue(currPos);             // add it to the visible snake trail
 
-                //Marking strategy:
+                var shownList = shownPositions.ToList();
+                int shownCount = shownList.Count; // current length of the snake trail
 
-                // if (array[currPos[0], currPos[1]] == 2)
-                //     array[currPos[0], currPos[1]] = 10;
-                // else
-                //     array[currPos[0], currPos[1]] = 4;
+                var posMap = new Dictionary<string, int>(shownCount); // "row,col" → trail index
+                for (int i = 0; i < shownCount; i++)
+                    posMap[$"{shownList[i][0]},{shownList[i][1]}"] = i; // 0 = start, shownCount-1 = newest
 
-
-                // Loop over the elements of the maze array
-                // and display as characters.
                 for (int rowIdx = 0; rowIdx < array.GetLength(0); rowIdx++)
                 {
                     for (int colIdx = 0; colIdx < array.GetLength(1); colIdx++)
@@ -248,168 +229,170 @@ namespace View
                         switch (array[rowIdx, colIdx])
                         {
                             case -1:
-                                Console.Write("🟦");   //walls
+                                Console.Write("🟦"); // wall
                                 break;
-                            case 1:                    //begin 
+                            case 1:
                                 if (currPos[0] == rowIdx && currPos[1] == colIdx)
-                                    Console.Write("⚽️");
+                                    Console.Write("⚽️"); // player at start
                                 else
-                                    Console.Write("🏠");
+                                    Console.Write("🏠"); // start tile
                                 break;
                             case 2:
                                 if (currPos[0] == rowIdx && currPos[1] == colIdx)
-                                    Console.Write("🏅");    //completed
+                                    Console.Write("🏅"); // reached the end
                                 else
-                                    Console.Write("🍦");    //end                           
+                                    Console.Write("🍦"); // end tile
                                 break;
-                            case 0:                     //not visited or visited in a not marked array
+                            case 0:
                                 if (currPos[0] == rowIdx && currPos[1] == colIdx)
                                 {
-                                    Console.Write("⚽️");
+                                    Console.Write("⚽️"); // snake head
                                 }
-                                else if (shownPositions.Any(_ => _[0] == rowIdx && _[1] == colIdx))
+                                else if (posMap.TryGetValue($"{rowIdx},{colIdx}", out int posIdx))
                                 {
-                                    Console.Write("🏃");
+                                    int symIdx = (shownCount - 1 - posIdx) % symbolsArr.Length; // cycle symbols from head toward tail
+                                    Console.Write(symbolsArr[symIdx]); // snake body symbol
                                 }
                                 else
-                                    Console.Write("  ");
+                                    Console.Write("  "); // unvisited cell
                                 break;
-                            //Marking strategy 
                             case 10:
-                                Console.Write("🏅");    //completed
+                                Console.Write("🏅"); // solved path cell
                                 break;
                             case 4:
                                 if (currPos[0] == rowIdx && currPos[1] == colIdx)
                                 {
-                                    Console.Write("⚽️");
+                                    Console.Write("⚽️"); // snake head on a marked cell
+                                }
+                                else if (posMap.TryGetValue($"{rowIdx},{colIdx}", out int posIdx4))
+                                {
+                                    int symIdx = (shownCount - 1 - posIdx4) % symbolsArr.Length; // same cycling formula
+                                    Console.Write(symbolsArr[symIdx]);
                                 }
                                 else
                                 {
-                                    Console.Write("🏃");
+                                    Console.Write("🏃"); // marked but not in the trail
                                 }
                                 break;
                             default:
                                 break;
                         }
                     }
-                    Console.WriteLine("🟦");
+                    Console.WriteLine("🟦"); // right border
                 }
 
                 for (int colIdx = 0; colIdx <= array.GetLength(1); colIdx++)
-                    Console.Write("🟦");
+                    Console.Write("🟦"); // bottom border
                 Console.WriteLine();
 
-                Thread.Sleep(timeInterval);
-                //Console.Clear();
+                Thread.Sleep(timeInterval); // pause so the frame is visible
             }
         }
 
-    public void DisplayMaze(Maze maze, string[] symbolsArr, int timeInterval, Queue<int[]> visitedPositions, PathFinderType algType = PathFinderType.Manual)
-    {
-        var array = maze.MazeMDArray;
-
-        var toBeShownPositions = new Queue<int[]>(visitedPositions);
-        var shownPositions = new Queue<int[]>();
-
-        while (toBeShownPositions.Count > 0)
+        public void DisplayMaze(Maze maze, string[] symbolsArr, int timeInterval, Queue<int[]> visitedPositions, PathFinderType algType = PathFinderType.Manual)
         {
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.BackgroundColor = ConsoleColor.White;
-            Console.Clear();
+            var array = maze.MazeMDArray;
 
-            var currPos = toBeShownPositions.Dequeue();
-            shownPositions.Enqueue(currPos);
+            var toBeShownPositions = new Queue<int[]>(visitedPositions); // positions to animate
+            var shownPositions = new Queue<int[]>();                      // positions already drawn
 
-            // Print the algorithm header
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3) )}{"  " + algType + "  "}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3))}");
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.BackgroundColor = ConsoleColor.White;
-            Console.WriteLine();
-
-            // Loop over the maze
-            for (int rowIdx = 0; rowIdx < array.GetLength(0); rowIdx++)
+            while (toBeShownPositions.Count > 0) // one iteration = one animation frame
             {
-                for (int colIdx = 0; colIdx < array.GetLength(1); colIdx++)
-                {
-                    switch (array[rowIdx, colIdx])
-                    {
-                        case -1: // walls
-                            Console.Write("🟦");
-                            break;
-                        case 1: // start
-                            Console.Write(currPos[0] == rowIdx && currPos[1] == colIdx ? "⚽️" : "🏠");
-                            break;
-                        case 2: // end
-                            Console.Write(currPos[0] == rowIdx && currPos[1] == colIdx ? "🏅" : "🍦");
-                            break;
-                        case 0: // not visited / visited
-                        case 4: // visited marking
-                            {
-                                int index = shownPositions.ToList().FindIndex(p => p[0] == rowIdx && p[1] == colIdx);
+                Console.ForegroundColor = ConsoleColor.DarkBlue;
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.Clear(); // wipe previous frame
 
+                var currPos = toBeShownPositions.Dequeue(); // cell being revealed this frame
+                shownPositions.Enqueue(currPos);             // add to the growing snake trail
+
+                var shownList = shownPositions.ToList();
+                int shownCount = shownList.Count; // snake trail length for this frame
+
+                var posMap = new Dictionary<string, int>(shownCount); // "row,col" → trail index
+                for (int i = 0; i < shownCount; i++)
+                    posMap[$"{shownList[i][0]},{shownList[i][1]}"] = i;
+
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3) )}{"  " + algType + "  "}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3))}"); // algorithm name banner
+                Console.ForegroundColor = ConsoleColor.DarkBlue;
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.WriteLine();
+
+                for (int rowIdx = 0; rowIdx < array.GetLength(0); rowIdx++)
+                {
+                    for (int colIdx = 0; colIdx < array.GetLength(1); colIdx++)
+                    {
+                        switch (array[rowIdx, colIdx])
+                        {
+                            case -1:
+                                Console.Write("🟦"); // wall
+                                break;
+                            case 1:
+                                if (currPos[0] == rowIdx && currPos[1] == colIdx)
+                                    Console.Write("⚽️"); // player at start
+                                else
+                                    Console.Write("🏠"); // start tile
+                                break;
+                            case 2:
+                                if (currPos[0] == rowIdx && currPos[1] == colIdx)
+                                    Console.Write("🏅"); // reached the end
+                                else
+                                    Console.Write("🍦"); // end tile
+                                break;
+                            case 0:
                                 if (currPos[0] == rowIdx && currPos[1] == colIdx)
                                 {
-                                    // Current position
-                                    Console.Write("⚽️");
+                                    Console.Write("⚽️"); // snake head
                                 }
-                                else if (index >= 0)
+                                else if (posMap.TryGetValue($"{rowIdx},{colIdx}", out int posIdx))
                                 {
-                                    // Use symbol from symbolsArr based on queue order
-                                    Console.Write(symbolsArr[index % symbolsArr.Length]);
+                                    int symIdx = (shownCount - 1 - posIdx) % symbolsArr.Length; // newest = symbolsArr[0], cycles toward tail
+                                    Console.Write(symbolsArr[symIdx]);
+                                }
+                                else
+                                    Console.Write("  "); // unvisited passage
+                                break;
+                            case 10:
+                                Console.Write("🏅"); // solved path cell
+                                break;
+                            case 4:
+                                if (currPos[0] == rowIdx && currPos[1] == colIdx)
+                                {
+                                    Console.Write("⚽️"); // snake head on a marked cell
+                                }
+                                else if (posMap.TryGetValue($"{rowIdx},{colIdx}", out int posIdx4))
+                                {
+                                    int symIdx = (shownCount - 1 - posIdx4) % symbolsArr.Length; // same cycling formula for marked cells
+                                    Console.Write(symbolsArr[symIdx]);
                                 }
                                 else
                                 {
-                                    // Empty space
-                                    Console.Write("  ");
+                                    Console.Write("🏃"); // marked cell outside the trail
                                 }
-                            }
-                            break;
-                        case 10: // completed
-                            Console.Write("🏅");
-                            break;
+                                break;
+                            default:
+                                break;
+                        }
                     }
+                    Console.WriteLine("🟦"); // right border
                 }
-                Console.WriteLine("🟦");
+
+                for (int colIdx = 0; colIdx <= array.GetLength(1); colIdx++)
+                    Console.Write("🟦"); // bottom border
+                Console.WriteLine();
+
+                Thread.Sleep(timeInterval); // delay between frames
             }
-
-            // Bottom wall
-            for (int colIdx = 0; colIdx <= array.GetLength(1); colIdx++)
-                Console.Write("🟦");
-            Console.WriteLine();
-
-            Thread.Sleep(timeInterval);
         }
-    }
 
         public string[] generateSymbols(int spaces)
         {
-            var rnd = new Random(); 
-            var symbols = new string[2*spaces];
-            for (int i = 0; i < 2 * spaces; i++)
-            {
-            /*
-                if(i < 10)
-                    symbols[i] = ":" + i;
-                else
-                    symbols[i] = (i % 100) < 10 ? ":" + (i % 100) : (i % 100) + "";
+            string[] palette = { "🦖", "🐈", "🦕", "🦊", "🐢", "🦜" }; // available trail emojis
 
-            */
-                if (rnd.NextDouble() < 0.3)
-                {
-                    symbols[i] = "🦖";
-                }
+            var symbols = new string[Math.Max(8, 2 * spaces)]; // at least 8 symbols, scales with maze width
 
-                else if (rnd.NextDouble() < 0.7)
-                {
-                    symbols[i] = "🐈";
-                }
-
-                else
-                {
-                    symbols[i] = "🦕";
-                }
-            }
+            for (int i = 0; i < symbols.Length; i++)
+                symbols[i] = palette[i % palette.Length]; // cycle through the palette to fill the array
 
             return symbols;
         }
@@ -417,18 +400,18 @@ namespace View
         public void DisplaySuccess(bool success, string msg, int timeInterval)
         {
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
-            Console.WriteLine(success ? msg + "🎉 Path found! 🎊" : msg + "🔎  No path found. 🔎 ");
-            if(!success) 
-                Thread.Sleep(timeInterval);
+            Console.WriteLine(success ? msg + "🎉 Path found! 🎊" : msg + "🔎  No path found. 🔎 "); // print result
+            if (!success)
+                Thread.Sleep(timeInterval); // hold failure message so the user can read it
         }
+
         private void PrintWrongMove(int[] tmppos)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.BackgroundColor = ConsoleColor.DarkMagenta;
-            Console.WriteLine($"Wrong Direction -> {tmppos[0]}, {tmppos[1]}");
-
+            Console.WriteLine($"Wrong Direction -> {tmppos[0]}, {tmppos[1]}"); // show invalid position
             Thread.Sleep(100);
-            Console.BackgroundColor = ConsoleColor.White;       
+            Console.BackgroundColor = ConsoleColor.White;
         }
     }
 }
