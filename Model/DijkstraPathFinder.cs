@@ -7,8 +7,7 @@ namespace Model
         
         public void FindPath(Maze maze, int[] pos, Queue<int[]> visitedPositions)
         {
-            //ToDo implement this method
-            visitedPositions.Enqueue(pos); //remove this line
+            
         }
    }
 }
