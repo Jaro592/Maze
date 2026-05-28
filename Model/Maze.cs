@@ -33,6 +33,48 @@ namespace Model
             if(rows % 2 != 0) {rows++;}
             if(cols % 2 != 0) {cols++;}
 
+            var Array2D = new int[rows, cols];
+            var rand = new Random();
+            for (var rowIdx = 0; rowIdx < rows; rowIdx++)
+            {
+                for (var colIdx = 0; colIdx < cols; colIdx++)
+                {
+                    MazeMDArray[rowIdx, colIdx] = -1;
+                }
+            }
+            for (int r = 1; r < rows; r += 2)
+            {
+                for (int c = 1; c < cols; c += 2)
+                {
+                    MazeMDArray[r, c] = 0;
+
+                    bool canRight = c + 2 < cols;
+                    bool canUp    = r - 2 >= 1;
+
+                    if (canRight && canUp)
+                    {
+                        if (rand.Next(2) == 0) 
+                        {
+                            MazeMDArray[r, c + 1] = 0;
+                        }
+                        else 
+                        {
+                            MazeMDArray[r - 1, c] = 0;
+                        }
+                    }
+                    else if (canRight) 
+                    {
+                        MazeMDArray[r, c + 1] = 0;
+                    }
+                    else if (canUp)    
+                    {
+                        MazeMDArray[r - 1, c] = 0;
+                    }
+                }
+            }
+            MazeMDArray[1, 1]               = 1; Begin = new int[] { 1, 1 };
+            MazeMDArray[rows - 2, cols - 2] = 2; End   = new int[] { rows - 2, cols - 2 };
+
             //ToDo...
 
             GenerateFromText(MazeGrids.mazeText); //remove this line and implement the task

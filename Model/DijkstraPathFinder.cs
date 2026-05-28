@@ -46,18 +46,18 @@ namespace Model
                 visited.Add(current); 
                 foreach (var move in maze.moves)
                 {
-                    int newRow = current[0] + move[0];
-                    int newCol = current[1] + move[1];
+                    int newRowVert = current[0] + move[0];
+                    int newColHor = current[1] + move[1];
 
-                    if (!maze.IsValidMove(newRow, newCol)) continue;
+                    if (!maze.IsValidMove(newRowVert, newColHor)) continue;
 
-                    int[] neighbor = new int[] { newRow, newCol };
+                    int[] neighbor = new int[] { newRowVert, newColHor };
 
-                    int tentativeG = gScore[Key(current)] + 1;
-                    if (!gScore.ContainsKey(Key(neighbor)) || tentativeG < gScore[Key(neighbor)])
+                    int possibleG = gScore[Key(current)] + 1;
+                    if (!gScore.ContainsKey(Key(neighbor)) || possibleG < gScore[Key(neighbor)])
                     {
                         cameFrom[Key(neighbor)] = current;
-                        gScore[Key(neighbor)] = tentativeG;
+                        gScore[Key(neighbor)] = possibleG;
                         if (!openset.Any(n => n.SequenceEqual(neighbor)))
                         {
                             openset.Add(neighbor);
