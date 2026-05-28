@@ -75,6 +75,11 @@ namespace Model
             MazeMDArray[1, 1]               = 1; Begin = new int[] { 1, 1 };
             MazeMDArray[rows - 2, cols - 2] = 2; End   = new int[] { rows - 2, cols - 2 };
 
+            MazeMDArray = new int[rows, cols];
+            for (int rowIndex = 0; rowIndex < rows; rowIndex++)
+                for (int colIndex = 0; colIndex < cols; colIndex++)
+                    MazeMDArray[rowIndex, colIndex] = MazeArray[rowIndex][colIndex];
+
             //ToDo...
 
             GenerateFromText(MazeGrids.mazeText); //remove this line and implement the task
