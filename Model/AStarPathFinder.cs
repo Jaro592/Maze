@@ -9,7 +9,9 @@ namespace Model
 
         public void FindPath(Maze maze, int[] pos, Queue<int[]> visitedPositions)
         {
-    }
+            
+        }
+}
 }
 
             
