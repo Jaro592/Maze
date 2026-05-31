@@ -10,7 +10,7 @@ namespace Model
             // To do: Implement Dijkstra's algorithm
             int[] start = pos;
             int[] end = maze.End;
-            var visited = new List<int[]>();
+            //var visited = new List<int[]>();
 
             var openset = new List<int[]>();
             var cameFrom = new Dictionary<string, int[]>();
@@ -24,10 +24,10 @@ namespace Model
 
                 if (current.SequenceEqual(end))
                 {
-                    foreach (var v in visited)
-                    {
-                        visitedPositions.Enqueue(v);
-                    }
+                    //foreach (var v in visited)
+                    //{
+                    //    visitedPositions.Enqueue(v);
+                    //}
                     var path = new Stack<int[]>();
                     while (cameFrom.ContainsKey(Key(current)))
                     {
@@ -43,7 +43,7 @@ namespace Model
                 }
 
                 openset.Remove(current);
-                visited.Add(current); 
+                //visited.Add(current); 
                 foreach (var move in maze.moves)
                 {
                     int newRow = current[0] + move[0];

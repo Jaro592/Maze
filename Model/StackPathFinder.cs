@@ -52,8 +52,8 @@ namespace Model
                         foundNextMove = true;
                     }
                 }
-                if (!foundNextMove)
-                    path.Pop();
+                //if (!foundNextMove)
+                  //  path.Pop();
 
 
 

@@ -15,17 +15,24 @@ namespace Model
             var openset = new List<int[]>();
             var cameFrom = new Dictionary<string, int[]>();
             var gScore = new Dictionary<string, int>();
+            var fScore = new Dictionary<string, int>();
+
+            var visited = new List<int[]>();
             openset.Add(start);
             gScore[Key(start)] = 0;
+            fScore[Key(start)] = Heuristic(start, end);
 
             while (openset.Count > 0)
             {
-                // fScore = gScore + heuristiek
                 int[] current = openset
-                    .OrderBy(n => gScore.GetValueOrDefault(Key(n), int.MaxValue) + Heuristic(n, end)).First();
+                    .OrderBy(n => fScore.GetValueOrDefault(Key(n), int.MaxValue)).First();
                 if (current.SequenceEqual(end))
                 {
-                    // reconstruct path
+                    // Eerst alle verkende posities
+                    foreach (var v in visited)
+                        visitedPositions.Enqueue(v);
+
+                    // Dan het kortste pad
                     var path = new Stack<int[]>();
                     while (cameFrom.ContainsKey(Key(current)))
                     {
@@ -34,13 +41,13 @@ namespace Model
                     }
                     path.Push(start);
                     while (path.Count > 0)
-                    {
                         visitedPositions.Enqueue(path.Pop());
-                    }
+
                     return;
                 }
 
                 openset.Remove(current);
+                visited.Add(current);
                 foreach (var move in maze.moves)
                 {
                     int newRow = current[0] + move[0];
@@ -55,6 +62,7 @@ namespace Model
                     {
                         cameFrom[Key(neighbor)] = current;
                         gScore[Key(neighbor)] = tentativeG;
+                        fScore[Key(neighbor)] = tentativeG + Heuristic(neighbor, end);
                         if (!openset.Any(n => n.SequenceEqual(neighbor)))
                         {
                             openset.Add(neighbor);
