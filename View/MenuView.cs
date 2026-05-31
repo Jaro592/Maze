@@ -54,8 +54,8 @@ namespace View
           Console.WriteLine(line);
           Console.BackgroundColor = ConsoleColor.White;
         }
-        if(option != "")
-          ProgressBar(numBlocks, 300);
+        //if(option != "")
+          //ProgressBar(numBlocks, 300);
       }
 
       static void ProgressBar(int numBlocks, int timeInterval)
