@@ -20,7 +20,9 @@ namespace Model
 
             while (openset.Count > 0)
             {
-                int[] current = openset[0];
+                // fScore = gScore + heuristiek
+                int[] current = openset
+                    .OrderBy(n => gScore.GetValueOrDefault(Key(n), int.MaxValue) + Heuristic(n, end)).First();
                 if (current.SequenceEqual(end))
                 {
                     // reconstruct path
@@ -38,7 +40,7 @@ namespace Model
                     return;
                 }
 
-                openset.RemoveAt(0);
+                openset.Remove(current);
                 foreach (var move in maze.moves)
                 {
                     int newRow = current[0] + move[0];
@@ -63,6 +65,9 @@ namespace Model
 
 
         }
+
+    private int Heuristic(int[] pos, int[] end) =>
+        Math.Abs(pos[0] - end[0]) + Math.Abs(pos[1] - end[1]);
 
     }
 }
