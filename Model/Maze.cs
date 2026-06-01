@@ -32,19 +32,61 @@ namespace Model
             if(rows < 4 || cols < 4) {rows = 20; cols = 40;}
             if(rows % 2 != 0) {rows++;}
             if(cols % 2 != 0) {cols++;}
-            int[,] MazeArrey = new int[rows,cols];
-            for (int i = 0; i < MazeArray.GetLength(0); i++)
+
+
+            MazeMDArray = new int[rows, cols];
+            for (int i = 0; i < rows; i++)
+                for (int j = 0; j < cols; j++)
+                    MazeMDArray[i, j] = -1;
+
+            Begin = new int[] { 1, 1 };
+            End = new int[] { rows - 2, cols - 2 };
+
+            Carve(1, 1, rows, cols);
+
+            MazeMDArray[1, 1] = 1;
+            MazeMDArray[rows - 2, cols - 2] = 2;
+
+            MazeArray = ToJaggedArray(MazeMDArray, rows, cols);
+
+        }
+
+        private int[][] ToJaggedArray(int[,] mdArray, int rows, int cols)
+        {
+            int[][] jagged = new int[rows][];
+            for (int i = 0; i<rows; i++)
             {
-                for (int j = 0; j < MazeArray.GetLength(1); j++)
+                jagged[i] = new int[cols];
+                for (int j = 0; j<cols; j++)
                 {
-                    MazeArrey[i, j] = -1;
+                    jagged[i][j] = mdArray[i, j];
                 }
             }
-
-            
-
-            GenerateFromText(MazeGrids.mazeText); //remove this line and implement the task
+            return jagged;
         }
+
+        private void Carve(int startX, int startY, int rows, int cols)
+        {
+            MazeMDArray[startX, startY] = 0;
+            var rng = new Random();
+            var dirs = moves.OrderBy(_ => rng.Next()).ToArray();
+
+            foreach (var dir in dirs)
+            {
+                int neighborRow = startX + dir[0] * 2;
+                int neighborCol = startY + dir[1] * 2;
+                int wallRow = startX + dir[0];
+                int wallCol = startY + dir[1];
+
+                if (neighborRow >=0 && neighborCol>=0 && neighborRow < rows && neighborCol < cols && MazeMDArray[neighborRow, neighborCol] == -1)
+                {
+                    MazeMDArray[wallRow, wallCol] =0;
+                    Carve(neighborRow, neighborCol, rows, cols);
+                } 
+            }
+
+        }
+
 
         int[][] ToMazeArray(string maze)
         {
