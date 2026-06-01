@@ -9,7 +9,7 @@ namespace Model
         public void FindPath(Maze maze, int[] pos, Queue<int[]> visitedPositions) // akif
         {
             var path = new List<int[]>();
-            var visited = new HashSet<string>(); // to keep track of visited positions, using a hashset for O(1) lookup
+            var visited = new HashSet<(int, int)>(); // to keep track of visited positions, using a hashset for O(1) lookup
             if (DFS(maze, pos, path, visited))
             {
                 foreach (var step in path)
@@ -19,10 +19,10 @@ namespace Model
             }
         }
 
-        private bool DFS(Maze maze, int[] pos, List<int[]> path, HashSet<string> visited)
+        private bool DFS(Maze maze, int[] pos, List<int[]> path, HashSet<(int, int)> visited)
         {
             if (!maze.IsValidMove(pos[0], pos[1])) return false; // if the move is invalid, return false
-            string key = $"{pos[0]},{pos[1]}"; // create a unique key for the current position
+            (int, int) key = (pos[0],pos[1]); // create a unique key for the current position
             if (visited.Contains(key)) return false; // if we've already visited this position, return false
             visited.Add(key); // mark the current position as visited
             path.Add(pos); // add the current position to the path
