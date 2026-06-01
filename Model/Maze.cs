@@ -32,8 +32,16 @@ namespace Model
             if(rows < 4 || cols < 4) {rows = 20; cols = 40;}
             if(rows % 2 != 0) {rows++;}
             if(cols % 2 != 0) {cols++;}
+            int[,] MazeArrey = new int[rows,cols];
+            for (int i = 0; i < MazeArray.GetLength(0); i++)
+            {
+                for (int j = 0; j < MazeArray.GetLength(1); j++)
+                {
+                    MazeArrey[i, j] = -1;
+                }
+            }
 
-            //ToDo...
+            
 
             GenerateFromText(MazeGrids.mazeText); //remove this line and implement the task
         }
