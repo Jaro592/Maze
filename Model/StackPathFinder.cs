@@ -38,7 +38,7 @@ namespace Model
                     }
                     return;
                 }
-                bool foundNextMove = false;
+
                 foreach (var move in maze.moves)
                 {
                     var newRow = move[0] + currRow;
@@ -49,11 +49,9 @@ namespace Model
 
                         int[] newPos = [newRow, newCol];
                         stack.Push(newPos);
-                        foundNextMove = true;
+
                     }
                 }
-                if (!foundNextMove)
-                    path.Pop();
 
 
 
