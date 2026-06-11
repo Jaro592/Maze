@@ -15,7 +15,7 @@ namespace Model
 
             bool[,] visited = new bool[maze.MazeArray.Length, maze.MazeArray[0].Length];
 
-            Stack<int[]> path = new Stack<int[]>();
+            // Stack<int[]> path = new Stack<int[]>();
 
             visited[row, col] = true;
             stack.Push(pos);
@@ -24,21 +24,22 @@ namespace Model
             while (stack.Count != 0)
             {
                 var currentPos = stack.Pop();
+                visitedPositions.Enqueue(currentPos);
                 var currRow = currentPos[0];
                 var currCol = currentPos[1];
 
-                path.Push(currentPos);
+                // path.Push(currentPos);
 
 
                 if (currRow == maze.End[0] && currCol == maze.End[1])
                 {
-                    foreach (var p in path.Reverse())
-                    {
-                        visitedPositions.Enqueue(p);
-                    }
+                    // foreach (var p in path.Reverse())
+                    // {
+                    //     visitedPositions.Enqueue(p);
+                    // }
                     return;
                 }
-                bool foundNextMove = false;
+                // bool foundNextMove = false;
                 foreach (var move in maze.moves)
                 {
                     var newRow = move[0] + currRow;
@@ -49,11 +50,10 @@ namespace Model
 
                         int[] newPos = [newRow, newCol];
                         stack.Push(newPos);
-                        foundNextMove = true;
+                        // foundNextMove = true;
                     }
                 }
-                //if (!foundNextMove)
-                  //  path.Pop();
+
 
 
 
