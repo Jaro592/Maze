@@ -33,8 +33,17 @@ xx            xx            xx.";
 
     //-----------constants:------------
     const int rows = 25, cols = 2 * rows;
-    const int timeInterval = 400;
+    const int timeInterval = 100;
     //---------------------------------
+
+    //Predefined maze:
+    //Maze maze = new Maze(mazeText); //to use the string above;
+    //OR
+    //Maze maze = new Maze(MazeGrids.mazeText);
+    //OR
+    //Maze maze = new Maze(-1, -1);
+    //OR
+    //Maze maze = new Maze(false);
 
     //Predefined maze:
     //Maze maze = new Maze(mazeText); //to use the string above;

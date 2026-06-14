@@ -295,14 +295,31 @@ namespace View
 
             var toBeShownPositions = new Queue<int[]>(visitedPositions); // positions to animate
             var shownPositions = new Queue<int[]>();                      // positions already drawn
+            var finalPathPositions = new Queue<string>();
+            bool showingRed = false;
+            bool showingResult = false;
 
             while (toBeShownPositions.Count > 0) // one iteration = one animation frame
             {
+                var currPos = toBeShownPositions.Dequeue(); // cell being revealed this frame
+
+                if (currPos[0] == -998 && currPos[1] == -998)
+                {
+                    showingRed = true;
+                    continue;
+                }
+                if (currPos[0] == -999 && currPos[1] == -999)
+                {
+                    showingResult = true;
+                    continue;
+                }
+                if (showingResult)
+                    finalPathPositions.Enqueue($"{currPos[0]},{currPos[1]}");
+
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.BackgroundColor = ConsoleColor.White;
                 Console.Clear(); // wipe previous frame
 
-                var currPos = toBeShownPositions.Dequeue(); // cell being revealed this frame
                 shownPositions.Enqueue(currPos);             // add to the growing snake trail
 
                 var shownList = shownPositions.ToList();
@@ -342,12 +359,21 @@ namespace View
                             case 0:
                                 if (currPos[0] == rowIdx && currPos[1] == colIdx)
                                 {
-                                    Console.Write("⚽️"); // snake head
+                                    Console.Write(showingResult ? "🟩" : "⚽️"); // snake head
+                                }
+                                else if (finalPathPositions.Contains($"{rowIdx},{colIdx}"))
+                                {
+                                    Console.Write("🟩"); // groen = finale pad
                                 }
                                 else if (posMap.TryGetValue($"{rowIdx},{colIdx}", out int posIdx))
                                 {
-                                    int symIdx = (shownCount - 1 - posIdx) % symbolsArr.Length; // newest = symbolsArr[0], cycles toward tail
-                                    Console.Write(symbolsArr[symIdx]);
+                                    if (showingRed || showingResult)
+                                        Console.Write("🟥"); // rood = bezochte exploratie nodes
+                                    else
+                                    {
+                                        int symIdx = (shownCount - 1 - posIdx) % symbolsArr.Length;
+                                        Console.Write(symbolsArr[symIdx]);
+                                    }
                                 }
                                 else
                                     Console.Write("  "); // unvisited passage
@@ -360,10 +386,19 @@ namespace View
                                 {
                                     Console.Write("⚽️"); // snake head on a marked cell
                                 }
+                                else if (finalPathPositions.Contains($"{rowIdx},{colIdx}"))
+                                {
+                                    Console.Write("🟩"); // groen = finale pad op marked cell
+                                }
                                 else if (posMap.TryGetValue($"{rowIdx},{colIdx}", out int posIdx4))
                                 {
-                                    int symIdx = (shownCount - 1 - posIdx4) % symbolsArr.Length; // same cycling formula for marked cells
-                                    Console.Write(symbolsArr[symIdx]);
+                                    if (showingRed || showingResult)
+                                        Console.Write("🟥"); // rood = bezochte marked cell
+                                    else
+                                    {
+                                        int symIdx = (shownCount - 1 - posIdx4) % symbolsArr.Length;
+                                        Console.Write(symbolsArr[symIdx]); // emoji tijdens exploratie
+                                    }
                                 }
                                 else
                                 {
