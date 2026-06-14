@@ -17,20 +17,22 @@ namespace Controller
             _view = view;
             _timeInterval = timeInterval;
         }
-        
+
         public bool Run(ConsoleKey key)
         {
-            if(key == ConsoleKey.Q) {
+            if (key == ConsoleKey.Q)
+            {
                 MenuView.PrintEndMessage();
                 return false;
             }
-            
+
             Console.ForegroundColor = ConsoleColor.DarkRed;
             MenuView.DisplayMenu(key);
 
             IPathFinder pathFinder = new ManualPathFinder();
             bool chosen = true;
-            switch(key){
+            switch (key)
+            {
                 case ConsoleKey.D1:
                     pathFinder = new RecursivePathFinder();
                     break;
@@ -38,29 +40,33 @@ namespace Controller
                     pathFinder = new StackPathFinder();
                     break;
                 case ConsoleKey.D3:
-                    pathFinder = new AStarPathFinder();
+                    pathFinder = new BFSPathFinder();
                     break;
                 case ConsoleKey.D4:
+                    pathFinder = new AStarPathFinder();
+                    break;
+                case ConsoleKey.D5:
                     pathFinder = new DijkstraPathFinder();
-                    break;   
+                    break;
                 case ConsoleKey.P:
                     pathFinder = new ManualPathFinder();
-                    break;     
+                    break;
                 default:
                     chosen = false;
-                    break;     
+                    break;
             }
-            
-            if(chosen) {
+
+            if (chosen)
+            {
                 MazeController controller = new MazeController(_maze, _view, _timeInterval, pathFinder);
                 controller.Run();
-                Thread.Sleep(2*_timeInterval);
+                Thread.Sleep(2 * _timeInterval);
                 return true;
             }
-            
+
             return true;
 
         }
-        
+
     }
 }

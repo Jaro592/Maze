@@ -1,60 +1,51 @@
-
 namespace Model
 {
-    public class StackPathFinder : IPathFinder
+    public class BFSPathFinder : IPathFinder
     {
-        PathFinderType _algType = PathFinderType.Stack;
+        PathFinderType _algType = PathFinderType.BFS;
         public PathFinderType algType { get => _algType; set { } }
 
-        public void FindPath(Maze maze, int[] pos, Queue<int[]> visitedPositions)  // (1,1) => (1,2)rigth, (2,1)down
+        public void FindPath(Maze maze, int[] pos, Queue<int[]> visitedPositions)
         {
-            //stack()(1,2)  (2,1) () 
             int row = pos[0];
             int col = pos[1];
-            Stack<int[]> stack = new Stack<int[]>();
+
+            Queue<int[]> queue = new Queue<int[]>();
 
             bool[,] visited = new bool[maze.MazeArray.Length, maze.MazeArray[0].Length];
 
-
-
             visited[row, col] = true;
-            stack.Push(pos);
+            queue.Enqueue(pos);
 
-
-            while (stack.Count != 0)
+            while (queue.Count != 0)
             {
-                var currentPos = stack.Pop();
+                var currentPos = queue.Dequeue();
+
                 visitedPositions.Enqueue(currentPos);
+
                 var currRow = currentPos[0];
                 var currCol = currentPos[1];
-
-
 
                 if (currRow == maze.End[0] && currCol == maze.End[1])
                 {
                     return;
                 }
+
                 foreach (var move in maze.moves)
                 {
-                    var newRow = move[0] + currRow;
-                    var newCol = move[1] + currCol;
+                    int newRow = currRow + move[0];
+                    int newCol = currCol + move[1];
+
                     if (maze.IsValidMove(newRow, newCol) && !visited[newRow, newCol])
                     {
                         visited[newRow, newCol] = true;
 
-                        int[] newPos = [newRow, newCol];
-                        stack.Push(newPos);
+                        int[] newPos = { newRow, newCol };
+
+                        queue.Enqueue(newPos);
                     }
                 }
-
-
-
-
             }
-
         }
     }
 }
-
-
-

@@ -41,43 +41,12 @@ namespace Model
             MazeMDArray = ToMazeMDArray(lines);
         }
 
-        // void GenerateMaze(int rows = 20, int cols = 40, MazeGeneratorType generatorType = MazeGeneratorType.BinaryTree)
-        // {
-        //     if (rows < 4 || cols < 4) { rows = 20; cols = 40; }
-        //     if (rows % 2 != 0) { rows++; }
-        //     if (cols % 2 != 0) { cols++; }
-
-
-        //     MazeMDArray = new int[rows, cols];
-        //     for (int i = 0; i < rows; i++)
-        //         for (int j = 0; j < cols; j++)
-        //             MazeMDArray[i, j] = -1;
-
-        //     Begin = new int[] { 1, 1 };
-        //     End = new int[] { rows - 3, cols - 3 };
-
-        //     if (generatorType == MazeGeneratorType.DFS)
-        //     {
-        //         Carve(1, 1, rows, cols);
-        //     }
-
-        //     else
-        //     {
-        //         CarveBinaryTree(rows, cols);
-        //     }
-
-        //     MazeMDArray[1, 1] = 1;
-        //     MazeMDArray[rows - 3, cols - 3] = 2;
-
-        //     MazeArray = ToJaggedArray(MazeMDArray, rows, cols);
-
-        // }
         void GenerateMaze(int rows = 20, int cols = 40, MazeGeneratorType generatorType = MazeGeneratorType.BinaryTree)
         {
             if (rows < 4 || cols < 4)
             {
                 rows = 20;
-                cols = 40;
+                cols = 49;
             }
 
             if (rows % 2 != 0) rows++;
@@ -147,31 +116,25 @@ namespace Model
             }
 
         }
-
         private void CarveBinaryTree(int rows, int cols)
         {
             var rng = new Random();
 
-            for (int row = 1; row < rows - 1; row += 2)
+            for (int row = 1; row < rows; row += 2)
             {
-                for (int col = 1; col < cols - 1; col += 2)
+                for (int col = 1; col < cols; col += 2)
                 {
                     MazeMDArray[row, col] = 0;
 
-                    bool canGoUp = row > 1;
-                    bool canGoLeft = col > 1;
-
-                    if (!canGoUp && !canGoLeft)
+                    if (row == 1 && col == 1)
                         continue;
 
-                    if (!canGoUp)
-                    {
+                    if (row == 1)
                         MazeMDArray[row, col - 1] = 0;
-                    }
-                    else if (!canGoLeft)
-                    {
+
+                    else if (col == 1)
                         MazeMDArray[row - 1, col] = 0;
-                    }
+
                     else
                     {
                         if (rng.Next(2) == 0)
@@ -182,43 +145,6 @@ namespace Model
                 }
             }
         }
-
-
-        private void CarveBFS(int startX, int startY, int rows, int cols)
-        {
-            MazeMDArray[startX, startY] = 0;
-            Queue<int[]> queue = new Queue<int[]>();
-            queue.Enqueue(new int[] { startX, startY });
-            var rng = new Random();
-
-            while (queue.Count > 0)
-            {
-                var current = queue.Dequeue();
-
-                int currentRow = current[0];
-                int currentCol = current[1];
-
-                // var rng = new Random();
-                var dirs = moves.OrderBy(_ => rng.Next()).ToArray();
-
-                foreach (var dir in dirs)
-                {
-                    int neighborRow = currentRow + dir[0] * 2;
-                    int neighborCol = currentCol + dir[1] * 2;
-
-                    int wallRow = currentRow + dir[0];
-                    int wallCol = currentCol + dir[1];
-
-                    if (neighborRow >= 0 && neighborCol >= 0 && neighborRow < rows && neighborCol < cols && MazeMDArray[neighborRow, neighborCol] == -1)
-                    {
-                        MazeMDArray[wallRow, wallCol] = 0;
-                        MazeMDArray[neighborRow, neighborCol] = 0;
-                        queue.Enqueue(new int[] { neighborRow, neighborCol });
-                    }
-                }
-            }
-        }
-
 
         int[][] ToMazeArray(string maze)
         {
@@ -231,6 +157,7 @@ namespace Model
             for (var rowIdx = 0; rowIdx < arrayLines.Length; rowIdx++)
             {
                 var line = arrayLines[rowIdx];
+
                 // row array:
                 var row = new int[line.Length];
                 for (int colIdx = 0; colIdx < line.Length; colIdx++)
@@ -383,3 +310,10 @@ xxxx    xxxxx xx xxxx xxxxx xx.
 xx            xx            xx.";
     }
 }
+
+
+
+
+
+
+
