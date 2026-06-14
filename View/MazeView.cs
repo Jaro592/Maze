@@ -22,11 +22,11 @@ namespace View
                     switch (row[colIdx])
                     {
                         case -1: Console.Write("🟦"); break;  // wall
-                        case 1:  Console.Write("🏠"); break;  // start
-                        case 2:  Console.Write("🍦"); break;  // end
-                        case 0:  Console.Write("  "); break;  // unvisited passage
+                        case 1: Console.Write("🏠"); break;  // start
+                        case 2: Console.Write("🍦"); break;  // end
+                        case 0: Console.Write("  "); break;  // unvisited passage
                         case 10: Console.Write("🏅"); break;  // solved path cell
-                        case 4:  Console.Write("⚽️"); break;  // visited cell
+                        case 4: Console.Write("⚽️"); break;  // visited cell
                         default: break;
                     }
                 }
@@ -107,7 +107,7 @@ namespace View
             Console.Clear();
 
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3) )}{"  " + algType + "  "}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3))}"); // centered algorithm name banner
+            Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1) / 2 - algType.ToString().Length / 3))}{"  " + algType + "  "}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1) / 2 - algType.ToString().Length / 3))}"); // centered algorithm name banner
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.BackgroundColor = ConsoleColor.White;
             System.Console.WriteLine();
@@ -330,7 +330,7 @@ namespace View
                     posMap[$"{shownList[i][0]},{shownList[i][1]}"] = i;
 
                 Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3) )}{"  " + algType + "  "}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3))}"); // algorithm name banner
+                Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1) / 2 - algType.ToString().Length / 3))}{"  " + algType + "  "}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1) / 2 - algType.ToString().Length / 3))}"); // algorithm name banner
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.BackgroundColor = ConsoleColor.White;
                 Console.WriteLine();

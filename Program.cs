@@ -8,17 +8,17 @@ using System.Text.RegularExpressions;
 
 class Program
 {
-    private static void StartMenu (Maze maze, MazeView view)
-    {
-      Console.ForegroundColor = ConsoleColor.DarkRed;
-      Console.BackgroundColor = ConsoleColor.White;
-      MenuView.DisplayMenu();
-      view.DisplayMaze(maze); 
-    }
+  private static void StartMenu(Maze maze, MazeView view)
+  {
+    Console.ForegroundColor = ConsoleColor.DarkRed;
+    Console.BackgroundColor = ConsoleColor.White;
+    MenuView.DisplayMenu();
+    view.DisplayMaze(maze);
+  }
 
-    static void Main()
-    {
-        string mazeText = @"
+  static void Main()
+  {
+    string mazeText = @"
 xxxxxx1xxxxxxxxxxxxxxxxxxxxxxx.
  x   x   x                    .
 xx2x xxx   x xxxxxxxx    x xx .
@@ -31,42 +31,51 @@ xx     xx   x xxxx   xx   x xx.
 xxxx    xxxxx xx xxxx xxxxx xx.
 xx            xx            xx.";
 
-        //-----------constants:------------
-        const int rows = 25, cols = 2*rows;
-        const int timeInterval = 100;
-        //---------------------------------
-        
-        //Predefined maze:
-        //Maze maze = new Maze(mazeText); //to use the string above;
-        //OR
-        //Maze maze = new Maze(MazeGrids.mazeText);
-        //OR
-        //Maze maze = new Maze(-1, -1);
-        //OR
-        //Maze maze = new Maze(false);
+    //-----------constants:------------
+    const int rows = 25, cols = 2 * rows;
+    const int timeInterval = 100;
+    //---------------------------------
 
-        Maze maze = new Maze(rows, cols);
-        MazeView view = new MazeView();
+    //Predefined maze:
+    //Maze maze = new Maze(mazeText); //to use the string above;
+    //OR
+    //Maze maze = new Maze(MazeGrids.mazeText);
+    //OR
+    //Maze maze = new Maze(-1, -1);
+    //OR
+    //Maze maze = new Maze(false);
 
-        MenuController menuController = new MenuController(maze, view, timeInterval);
-        ConsoleKey key;
-        bool resp = true;
+    //Predefined maze:
+    //Maze maze = new Maze(mazeText); //to use the string above;
+    //OR
+    //Maze maze = new Maze(MazeGrids.mazeText);
+    //OR
+    //Maze maze = new Maze(-1, -1);
+    //OR
+    //Maze maze = new Maze(false);
 
-        //----Refresh for visualization reason----
-        int i = 0;
-        while (i <= 4)
-        {
-          StartMenu(maze, view);           
-          i++;
-        }
-        //----------------------------------------
+    Maze maze = new Maze(rows, cols, MazeGeneratorType.BinaryTree);
+    MazeView view = new MazeView();
 
-        while (resp)
-        {
-          StartMenu(maze, view); 
-          key = Console.ReadKey(true).Key;
-          resp = menuController.Run(key);
-        }
+    MenuController menuController = new MenuController(maze, view, timeInterval);
+    ConsoleKey key;
+    bool resp = true;
+
+    //----Refresh for visualization reason----
+    int i = 0;
+    while (i <= 4)
+    {
+      StartMenu(maze, view);
+      i++;
     }
+    //----------------------------------------
+
+    while (resp)
+    {
+      StartMenu(maze, view);
+      key = Console.ReadKey(true).Key;
+      resp = menuController.Run(key);
+    }
+  }
 }
 
