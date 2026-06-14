@@ -46,6 +46,7 @@ namespace Model
                     break;
 
                 unvisitedNodes.Remove(closestNode);
+                visitedPositions.Enqueue(closestNode);
 
                 if (closestNode.SequenceEqual(end))
                     break;
@@ -68,6 +69,9 @@ namespace Model
                     }
                 }
             }
+            visitedPositions.Enqueue(new int[] { -998, -998 });
+            visitedPositions.Enqueue(new int[] { -999, -999 });
+
 
             var path = new Stack<int[]>();
             int[] current = end;
