@@ -372,7 +372,7 @@ namespace View
                                     else
                                     {
                                         int symIdx = (shownCount - 1 - posIdx) % symbolsArr.Length;
-                                        Console.Write(symbolsArr[symIdx]); // emoji tijdens exploratie
+                                        Console.Write(symbolsArr[symIdx]);
                                     }
                                 }
                                 else
