@@ -5,44 +5,45 @@ namespace Model
         PathFinderType _algType = PathFinderType.Dijkstra;
         public PathFinderType algType { get => _algType; set {} }
 
-        private string Key(int[] pos) => $"{pos[0]},{pos[1]}";
-
         public void FindPath(Maze maze, int[] pos, Queue<int[]> visitedPositions)
         {
             int[] start = pos;
             int[] end = maze.End;
 
-            var unvisitedNodes = new List<int[]>();
-            var distance = new Dictionary<string, double>();
-            var prev = new Dictionary<string, int[]>();
+            int rows = maze.MazeArray.Length;
+            int cols = maze.MazeArray[0].Length;
 
-            for (int r = 0; r < maze.MazeArray.Length; r++)
+            var unvisitedNodes = new List<int[]>();
+            var distance = new double[rows, cols];
+            var prevRow = new int[rows, cols];
+            var prevCol = new int[rows, cols];
+
+            for (int r = 0; r < rows; r++)
             {
                 for (int c = 0; c < maze.MazeArray[r].Length; c++)
                 {
                     if (maze.IsValidMove(r, c))
                     {
-                        int[] node = new int[] { r, c };
-                        string key = Key(node);
-                        distance[key] = double.PositiveInfinity;
-                        prev[key] = null;
-                        unvisitedNodes.Add(node);
+                        distance[r, c] = double.PositiveInfinity;
+                        prevRow[r, c] = -1;
+                        prevCol[r, c] = -1;
+                        unvisitedNodes.Add(new int[] { r, c });
                     }
                 }
             }
 
-            distance[Key(start)] = 0;
+            distance[start[0], start[1]] = 0;
 
             while (unvisitedNodes.Count > 0)
             {
                 int[] closestNode = unvisitedNodes[0];
                 foreach (var node in unvisitedNodes)
                 {
-                    if (distance[Key(node)] < distance[Key(closestNode)])
+                    if (distance[node[0], node[1]] < distance[closestNode[0], closestNode[1]])
                         closestNode = node;
                 }
 
-                if (distance[Key(closestNode)] == double.PositiveInfinity)
+                if (distance[closestNode[0], closestNode[1]] == double.PositiveInfinity)
                     break;
 
                 unvisitedNodes.Remove(closestNode);
@@ -58,14 +59,13 @@ namespace Model
 
                     if (!maze.IsValidMove(newRow, newCol)) continue;
 
-                    int[] buur = new int[] { newRow, newCol };
-                    string buurKey = Key(buur);
-                    double difRoute = distance[Key(closestNode)] + 1;
+                    double difRoute = distance[closestNode[0], closestNode[1]] + 1;
 
-                    if (difRoute < distance[buurKey])
+                    if (difRoute < distance[newRow, newCol])
                     {
-                        distance[buurKey] = difRoute;
-                        prev[buurKey] = closestNode;
+                        distance[newRow, newCol] = difRoute;
+                        prevRow[newRow, newCol] = closestNode[0];
+                        prevCol[newRow, newCol] = closestNode[1];
                     }
                 }
             }
@@ -78,11 +78,12 @@ namespace Model
 
             while (current != null && !current.SequenceEqual(start))
             {
-                string currentKey = Key(current);
-                if (!prev.ContainsKey(currentKey) || prev[currentKey] == null)
+                int r = current[0];
+                int c = current[1];
+                if (prevRow[r, c] == -1 && prevCol[r, c] == -1)
                     return;
                 path.Push(current);
-                current = prev[currentKey];
+                current = new int[] { prevRow[r, c], prevCol[r, c] };
             }
 
             path.Push(start);

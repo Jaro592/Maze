@@ -437,7 +437,10 @@ namespace View
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine(success ? msg + "🎉 Path found! 🎊" : msg + "🔎  No path found. 🔎 "); // print result
             if (!success)
-                Thread.Sleep(timeInterval); // hold failure message so the user can read it
+            {
+                Console.WriteLine("press any key to continue...");
+                Console.ReadLine(); // hold failure message so the user can read it
+            }
         }
 
         private void PrintWrongMove(int[] tmppos)

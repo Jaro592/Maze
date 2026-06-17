@@ -5,8 +5,6 @@ namespace Model
         PathFinderType _algType = PathFinderType.Astar;
         public PathFinderType algType { get => _algType; set {} }
 
-        private string Key(int[] pos) => $"{pos[0]},{pos[1]}";
-
         private int Heuristic(int[] pos, int[] end) =>
             Math.Abs(pos[0] - end[0]) + Math.Abs(pos[1] - end[1]);
 
@@ -15,45 +13,50 @@ namespace Model
             int[] start = pos;
             int[] end = maze.End;
 
-            var unvisitedNodes = new List<int[]>();
-            var distance = new Dictionary<string, double>();
-            var prev = new Dictionary<string, int[]>();
+            int rows = maze.MazeArray.Length;
+            int cols = maze.MazeArray[0].Length;
 
-            for (int r = 0; r < maze.MazeArray.Length; r++)
+            var unvisitedNodes = new List<int[]>();
+            var distance = new double[rows, cols];
+            var prevRow = new int[rows, cols];
+            var prevCol = new int[rows, cols];
+
+            for (int r = 0; r < rows; r++)
             {
                 for (int c = 0; c < maze.MazeArray[r].Length; c++)
                 {
                     if (maze.IsValidMove(r, c))
                     {
-                        int[] node = new int[] { r, c };
-                        string key = Key(node);
-                        distance[key] = double.PositiveInfinity;
-                        prev[key] = null;
-                        unvisitedNodes.Add(node);
+                        distance[r, c] = double.PositiveInfinity;
+                        prevRow[r, c] = -1;
+                        prevCol[r, c] = -1;
+                        unvisitedNodes.Add(new int[] { r, c });
                     }
                 }
             }
 
-            distance[Key(start)] = 0;
+            distance[start[0], start[1]] = 0;
 
             while (unvisitedNodes.Count > 0)
             {
                 int[] closestNode = unvisitedNodes[0];
                 foreach (var node in unvisitedNodes)
                 {
-                    double fNode = distance[Key(node)] + Heuristic(node, end);
-                    double fClosest = distance[Key(closestNode)] + Heuristic(closestNode, end);
-                    if (fNode < fClosest)
+                    double fNode = distance[node[0], node[1]] + Heuristic(node, end);
+                    double fClosest = distance[closestNode[0], closestNode[1]] + Heuristic(closestNode, end);
+
+                    if (fNode < fClosest ||
+                       (fNode == fClosest && Heuristic(node, end) < Heuristic(closestNode, end)))
                         closestNode = node;
                 }
 
-                if (distance[Key(closestNode)] == double.PositiveInfinity)
+                if (distance[closestNode[0], closestNode[1]] == double.PositiveInfinity)
                     break;
 
                 unvisitedNodes.Remove(closestNode);
                 visitedPositions.Enqueue(closestNode);
 
-                if (closestNode.SequenceEqual(end))
+                if (closestNode[0] == end[0] && closestNode[1] == end[1])
                     break;
 
                 foreach (var move in maze.moves)
@@ -63,14 +66,13 @@ namespace Model
 
                     if (!maze.IsValidMove(newRow, newCol)) continue;
 
-                    int[] buur = new int[] { newRow, newCol };
-                    string buurKey = Key(buur);
-                    double difRoute = distance[Key(closestNode)] + 1;
+                    double difRoute = distance[closestNode[0], closestNode[1]] + 1;
 
-                    if (difRoute < distance[buurKey])
+                    if (difRoute < distance[newRow, newCol])
                     {
-                        distance[buurKey] = difRoute;
-                        prev[buurKey] = closestNode;
+                        distance[newRow, newCol] = difRoute;
+                        prevRow[newRow, newCol] = closestNode[0];
+                        prevCol[newRow, newCol] = closestNode[1];
                     }
                 }
             }
@@ -80,13 +82,14 @@ namespace Model
             var path = new Stack<int[]>();
             int[] current = end;
 
-            while (current != null && !current.SequenceEqual(start))
+            while (current != null && !(current[0] == start[0] && current[1] == start[1]))
             {
-                string currentKey = Key(current);
-                if (!prev.ContainsKey(currentKey) || prev[currentKey] == null)
+                int r = current[0];
+                int c = current[1];
+                if (prevRow[r, c] == -1 && prevCol[r, c] == -1)
                     return;
                 path.Push(current);
-                current = prev[currentKey];
+                current = new int[] { prevRow[r, c], prevCol[r, c] };
             }
 
             path.Push(start);
