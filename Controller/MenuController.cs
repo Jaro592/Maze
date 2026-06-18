@@ -40,12 +40,9 @@ namespace Controller
                     pathFinder = new StackPathFinder();
                     break;
                 case ConsoleKey.D3:
-                    pathFinder = new BFSPathFinder();
-                    break;
-                case ConsoleKey.D4:
                     pathFinder = new AStarPathFinder();
                     break;
-                case ConsoleKey.D5:
+                case ConsoleKey.D4:
                     pathFinder = new DijkstraPathFinder();
                     break;
                 case ConsoleKey.P:

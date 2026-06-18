@@ -7,6 +7,7 @@ namespace Model
     {
         DFS,
         BinaryTree,
+        Manual
 
     }
     public class Maze
@@ -66,14 +67,19 @@ namespace Model
 
             if (generatorType == MazeGeneratorType.DFS)
             {
-                End = new int[] { rows - 2, cols - 2 };
                 Carve(1, 1, rows, cols);
             }
-            else
+            else if (generatorType == MazeGeneratorType.BinaryTree)
+
             {
-                End = new int[] { rows - 3, cols - 3 };
                 CarveBinaryTree(rows, cols);
             }
+            else if (generatorType == MazeGeneratorType.Manual)
+            {
+                GenerateFromText(MazeGrids.mazeText);
+                return;
+            }
+            End = new int[] { rows - 1, cols - 1 };
 
             MazeMDArray[Begin[0], Begin[1]] = 1;
             MazeMDArray[End[0], End[1]] = 2;
