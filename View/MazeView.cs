@@ -432,10 +432,22 @@ namespace View
             return symbols;
         }
 
-        public void DisplaySuccess(bool success, string msg, int timeInterval)
+        public void DisplaySuccess(bool success, string msg, int timeInterval, int explorationSteps = 0, int pathLength = 0)
         {
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine(success ? msg + "🎉 Path found! 🎊" : msg + "🔎  No path found. 🔎 "); // print result
+            if (success)
+            {
+                Console.WriteLine($"Exploration steps: {explorationSteps}");
+                Console.WriteLine($"Path length: {pathLength}");
+                Console.WriteLine("press any key to continue...");
+                Console.ReadLine(); // pause to let the user see the success message
+            }
+            else
+            {
+                Console.WriteLine("press any key to continue...");
+                Console.ReadLine(); // hold failure message so the user can read it
+            }
             if (!success)
             {
                 Console.WriteLine("press any key to continue...");

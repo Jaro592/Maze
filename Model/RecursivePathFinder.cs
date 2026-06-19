@@ -6,12 +6,16 @@ namespace Model
         PathFinderType _algType = PathFinderType.Recursive;
         public PathFinderType algType { get => _algType; set {} }
 
+        public int ExplorationSteps { get; set; } = 0;
+        public int PathLength { get; set; } = 0;
+
         public void FindPath(Maze maze, int[] pos, Queue<int[]> visitedPositions) // akif
         {
             var path = new List<int[]>();
             var visited = new HashSet<(int, int)>(); // to keep track of visited positions, using a hashset for O(1) lookup
             if (DFS(maze, pos, path, visited))
             {
+                PathLength = path.Count;
                 foreach (var step in path)
                 {
                     visitedPositions.Enqueue(step); // enqueue the steps in the path to the visitedPositions queue
@@ -26,6 +30,7 @@ namespace Model
             if (visited.Contains(key)) return false; // if we've already visited this position, return false
             visited.Add(key); // mark the current position as visited
             path.Add(pos); // add the current position to the path
+            ExplorationSteps++;
             if (pos[0] == maze.End[0] && pos[1] == maze.End[1]) return true; // if we've reached the end, return true
             foreach (var move in maze.moves)
             {

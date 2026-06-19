@@ -8,6 +8,9 @@ namespace Model
         private int Heuristic(int[] pos, int[] end) =>
             Math.Abs(pos[0] - end[0]) + Math.Abs(pos[1] - end[1]);
 
+        public int ExplorationSteps { get; set; } = 0;
+        public int PathLength { get; set; } = 0;
+
         public void FindPath(Maze maze, int[] pos, Queue<int[]> visitedPositions)
         {
             int[] start = pos;
@@ -55,6 +58,7 @@ namespace Model
 
                 unvisitedNodes.Remove(closestNode);
                 visitedPositions.Enqueue(closestNode);
+                ExplorationSteps++;
 
                 if (closestNode[0] == end[0] && closestNode[1] == end[1])
                     break;
@@ -93,6 +97,7 @@ namespace Model
             }
 
             path.Push(start);
+            PathLength = path.Count;
 
             while (path.Count > 0)
                 visitedPositions.Enqueue(path.Pop());

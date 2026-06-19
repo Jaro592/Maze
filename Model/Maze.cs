@@ -41,7 +41,7 @@ namespace Model
             MazeMDArray = ToMazeMDArray(lines);
         }
 
-        void GenerateMaze(int rows = 20, int cols = 40, MazeGeneratorType generatorType = MazeGeneratorType.BinaryTree)
+        void GenerateMaze(int rows = 20, int cols = 40, MazeGeneratorType generatorType = MazeGeneratorType.DFS)
         {
             if (rows < 4 || cols < 4)
             {

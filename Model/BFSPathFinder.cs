@@ -5,6 +5,9 @@ namespace Model
         PathFinderType _algType = PathFinderType.BFS;
         public PathFinderType algType { get => _algType; set { } }
 
+        public int ExplorationSteps { get; set; } = 0;
+        public int PathLength { get; set; } = 0;
+
         public void FindPath(Maze maze, int[] pos, Queue<int[]> visitedPositions)
         {
             int row = pos[0];
@@ -20,6 +23,7 @@ namespace Model
             while (queue.Count != 0)
             {
                 var currentPos = queue.Dequeue();
+                ExplorationSteps++;
 
                 visitedPositions.Enqueue(currentPos);
 
@@ -28,6 +32,7 @@ namespace Model
 
                 if (currRow == maze.End[0] && currCol == maze.End[1])
                 {
+                    PathLength = 0; // Initialize path length
                     return;
                 }
 

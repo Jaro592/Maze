@@ -5,6 +5,9 @@ namespace Model
         PathFinderType _algType = PathFinderType.Dijkstra;
         public PathFinderType algType { get => _algType; set {} }
 
+        public int ExplorationSteps { get; set; } = 0;
+        public int PathLength { get; set; } = 0;
+
         public void FindPath(Maze maze, int[] pos, Queue<int[]> visitedPositions)
         {
             int[] start = pos;
@@ -48,6 +51,8 @@ namespace Model
 
                 unvisitedNodes.Remove(closestNode);
                 visitedPositions.Enqueue(closestNode);
+                ExplorationSteps++;
+
 
                 if (closestNode.SequenceEqual(end))
                     break;
@@ -87,6 +92,7 @@ namespace Model
             }
 
             path.Push(start);
+            PathLength = path.Count;
 
             while (path.Count > 0)
                 visitedPositions.Enqueue(path.Pop());

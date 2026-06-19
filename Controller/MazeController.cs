@@ -105,7 +105,7 @@ namespace Controller
                 string msg = $"\n\n{String.Join("", Enumerable.Repeat(" ", _maze.MazeMDArray.GetLength(1) / 6))}";
                 //_view.DisplayMaze(_maze, symbols, _timeInterval, visitedPositions);
                 _view.DisplayMaze(_maze, symbols, _timeInterval, visitedPositions, _pathFinder.algType);
-                _view.DisplaySuccess(success, msg, _timeInterval);
+                _view.DisplaySuccess(success, msg, _timeInterval, _pathFinder.ExplorationSteps, _pathFinder.PathLength);
 
             }
         }

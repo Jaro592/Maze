@@ -4,6 +4,9 @@ namespace Model
     public class ManualPathFinder : IPathFinder
     {
         PathFinderType _algType = PathFinderType.Manual;
+
+        public int ExplorationSteps { get; set; } = 0;
+        public int PathLength { get; set; } = 0;
         public PathFinderType algType { get => _algType; set {} }
 
         public void FindPath(Maze maze, int[] pos, Queue<int[]> visitedPositions)
@@ -19,6 +22,7 @@ namespace Model
             }
 
             visitedPositions.Enqueue(pos);
+            ExplorationSteps++;
             
             return;
 
