@@ -54,7 +54,7 @@ xx            xx            xx.";
     //OR
     //Maze maze = new Maze(false);
 
-    Maze maze = new Maze(rows, cols, MazeGeneratorType.DFS);  // BinaryTree, Manual, DFS
+    Maze maze = new Maze(rows, cols, MazeGeneratorType.BinaryTree);  // BinaryTree, Manual, DFS
     MazeView view = new MazeView();
 
     MenuController menuController = new MenuController(maze, view, timeInterval);

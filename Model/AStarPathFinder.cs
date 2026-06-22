@@ -19,81 +19,81 @@ namespace Model
             int rows = maze.MazeArray.Length;
             int cols = maze.MazeArray[0].Length;
 
-            var unvisitedNodes = new List<int[]>();
-            var distance = new double[rows, cols];
+            var gScore = new double[rows, cols];
             var prevRow = new int[rows, cols];
             var prevCol = new int[rows, cols];
 
             for (int r = 0; r < rows; r++)
-            {
-                for (int c = 0; c < maze.MazeArray[r].Length; c++)
+                for (int c = 0; c < cols; c++)
                 {
-                    if (maze.IsValidMove(r, c))
-                    {
-                        distance[r, c] = double.PositiveInfinity;
-                        prevRow[r, c] = -1;
-                        prevCol[r, c] = -1;
-                        unvisitedNodes.Add(new int[] { r, c });
-                    }
-                }
-            }
-
-            distance[start[0], start[1]] = 0;
-
-            while (unvisitedNodes.Count > 0)
-            {
-                int[] closestNode = unvisitedNodes[0];
-                foreach (var node in unvisitedNodes)
-                {
-                    double fNode = distance[node[0], node[1]] + Heuristic(node, end);
-                    double fClosest = distance[closestNode[0], closestNode[1]] + Heuristic(closestNode, end);
-
-                    if (fNode < fClosest ||
-                       (fNode == fClosest && Heuristic(node, end) < Heuristic(closestNode, end)))
-                        closestNode = node;
+                    gScore[r, c] = double.PositiveInfinity;
+                    prevRow[r, c] = -1;
+                    prevCol[r, c] = -1;
                 }
 
-                if (distance[closestNode[0], closestNode[1]] == double.PositiveInfinity)
-                    break;
+            gScore[start[0], start[1]] = 0;
 
-                unvisitedNodes.Remove(closestNode);
-                visitedPositions.Enqueue(closestNode);
+            // Alleen ontdekte nodes zitten in de open set
+            var openSet = new List<int[]> { start };
+
+            while (openSet.Count > 0)
+            {
+                // Kies node met laagste f = g + h
+                int[] current = openSet[0];
+                foreach (var node in openSet)
+                {
+                    double fNode    = gScore[node[0], node[1]]    + Heuristic(node, end);
+                    double fCurrent = gScore[current[0], current[1]] + Heuristic(current, end);
+
+                    if (fNode < fCurrent ||
+                    (fNode == fCurrent && Heuristic(node, end) < Heuristic(current, end)))
+                        current = node;
+                }
+
+                openSet.Remove(current);
+                visitedPositions.Enqueue(current);
                 ExplorationSteps++;
 
-                if (closestNode[0] == end[0] && closestNode[1] == end[1])
+                if (current[0] == end[0] && current[1] == end[1])
                     break;
 
                 foreach (var move in maze.moves)
                 {
-                    int newRow = closestNode[0] + move[0];
-                    int newCol = closestNode[1] + move[1];
+                    int newRow = current[0] + move[0];
+                    int newCol = current[1] + move[1];
 
                     if (!maze.IsValidMove(newRow, newCol)) continue;
 
-                    double difRoute = distance[closestNode[0], closestNode[1]] + 1;
+                    double newG = gScore[current[0], current[1]] + 1;
 
-                    if (difRoute < distance[newRow, newCol])
+                    if (newG < gScore[newRow, newCol])
                     {
-                        distance[newRow, newCol] = difRoute;
-                        prevRow[newRow, newCol] = closestNode[0];
-                        prevCol[newRow, newCol] = closestNode[1];
+                        gScore[newRow, newCol] = newG;
+                        prevRow[newRow, newCol] = current[0];
+                        prevCol[newRow, newCol] = current[1];
+
+                        // Voeg toe aan open set als nog niet aanwezig
+                        if (!openSet.Any(n => n[0] == newRow && n[1] == newCol))
+                            openSet.Add(new int[] { newRow, newCol });
                     }
                 }
             }
+
+            // Sentinels + pad reconstructie (ongewijzigd)
             visitedPositions.Enqueue(new int[] { -998, -998 });
             visitedPositions.Enqueue(new int[] { -999, -999 });
 
             var path = new Stack<int[]>();
-            int[] current = end;
+            int[] curr = end;
 
-            while (current != null && !(current[0] == start[0] && current[1] == start[1]))
+            while (curr != null && !(curr[0] == start[0] && curr[1] == start[1]))
             {
-                int r = current[0];
-                int c = current[1];
+                int r = curr[0];
+                int c = curr[1];
                 if (prevRow[r, c] == -1 && prevCol[r, c] == -1)
                     return;
-                path.Push(current);
-                current = new int[] { prevRow[r, c], prevCol[r, c] };
+                path.Push(curr);
+                curr = new int[] { prevRow[r, c], prevCol[r, c] };
             }
 
             path.Push(start);

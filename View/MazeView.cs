@@ -43,7 +43,9 @@ namespace View
             var array = maze.MazeArray;
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.BackgroundColor = ConsoleColor.White;
-            Console.Clear();
+            Console.CursorVisible = false;
+            Console.SetCursorPosition(0, 0);
+            // Console.CursorVisible = true;
             var rand = new Random();
 
             for (int rowIdx = 0; rowIdx < array.Length; rowIdx++)
@@ -104,7 +106,9 @@ namespace View
             var array = maze.MazeArray;
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.BackgroundColor = ConsoleColor.White;
-            Console.Clear();
+            Console.CursorVisible = false;
+            Console.SetCursorPosition(0, 0);
+            //Console.CursorVisible = true;
 
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1) / 2 - algType.ToString().Length / 3))}{"  " + algType + "  "}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1) / 2 - algType.ToString().Length / 3))}"); // centered algorithm name banner
@@ -210,7 +214,9 @@ namespace View
             {
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.BackgroundColor = ConsoleColor.White;
-                Console.Clear(); // wipe previous frame
+                Console.CursorVisible = false;
+                Console.SetCursorPosition(0, 0); // wipe previous frame
+                //Console.CursorVisible = true;
 
                 var currPos = toBeShownPositions.Dequeue(); // reveal the next cell this frame
                 shownPositions.Enqueue(currPos);             // add it to the visible snake trail
@@ -291,6 +297,7 @@ namespace View
 
         public void DisplayMaze(Maze maze, string[] symbolsArr, int timeInterval, Queue<int[]> visitedPositions, PathFinderType algType = PathFinderType.Manual)
         {
+            Console.Clear();
             var array = maze.MazeMDArray;
 
             var toBeShownPositions = new Queue<int[]>(visitedPositions); // positions to animate
@@ -318,7 +325,9 @@ namespace View
 
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.BackgroundColor = ConsoleColor.White;
-                Console.Clear(); // wipe previous frame
+                Console.CursorVisible = false;
+                Console.SetCursorPosition(0, 0); // wipe previous frame
+                //Console.CursorVisible = true;
 
                 shownPositions.Enqueue(currPos);             // add to the growing snake trail
 
