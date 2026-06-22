@@ -16,6 +16,20 @@ namespace Model
             Queue<int[]> queue = new Queue<int[]>();
 
             bool[,] visited = new bool[maze.MazeArray.Length, maze.MazeArray[0].Length];
+            int rows = maze.MazeArray.Length;
+            int cols = maze.MazeArray[0].Length;
+
+            var prevRow = new int[rows, cols];
+            var prevCol = new int[rows, cols];
+
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    prevRow[r, c] = -1;
+                    prevCol[r, c] = -1;
+                }
+            }
 
             visited[row, col] = true;
             queue.Enqueue(pos);
@@ -32,8 +46,8 @@ namespace Model
 
                 if (currRow == maze.End[0] && currCol == maze.End[1])
                 {
-                    PathLength = 0; // Initialize path length
-                    return;
+
+                    break;
                 }
 
                 foreach (var move in maze.moves)
@@ -41,9 +55,20 @@ namespace Model
                     int newRow = currRow + move[0];
                     int newCol = currCol + move[1];
 
+                    // if (maze.IsValidMove(newRow, newCol) && !visited[newRow, newCol])
+                    // {
+                    //     visited[newRow, newCol] = true;
+
+                    //     int[] newPos = { newRow, newCol };
+
+                    //     queue.Enqueue(newPos);
+                    // }
                     if (maze.IsValidMove(newRow, newCol) && !visited[newRow, newCol])
                     {
                         visited[newRow, newCol] = true;
+
+                        prevRow[newRow, newCol] = currRow;
+                        prevCol[newRow, newCol] = currCol;
 
                         int[] newPos = { newRow, newCol };
 
@@ -51,6 +76,36 @@ namespace Model
                     }
                 }
             }
+            visitedPositions.Enqueue(new int[] { -998, -998 });
+            visitedPositions.Enqueue(new int[] { -999, -999 });
+
+            var path = new Stack<int[]>();
+
+            int[] current = maze.End;
+
+            while (!(current[0] == pos[0] && current[1] == pos[1]))
+            {
+                path.Push(current);
+
+                int r = current[0];
+                int c = current[1];
+
+                if (prevRow[r, c] == -1)
+                    return;
+
+                current = new int[]
+                {
+        prevRow[r, c],
+        prevCol[r, c]
+                };
+            }
+            path.Push(pos);
+            PathLength = path.Count;
+            while (path.Count > 0)
+            {
+                visitedPositions.Enqueue(path.Pop());
+            }
         }
+
     }
 }
