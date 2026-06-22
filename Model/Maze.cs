@@ -122,6 +122,35 @@ namespace Model
             }
 
         }
+        // private void CarveBinaryTree(int rows, int cols)
+        // {
+        //     var rng = new Random();
+
+        //     for (int row = 1; row < rows; row += 2)
+        //     {
+        //         for (int col = 1; col < cols; col += 2)
+        //         {
+        //             MazeMDArray[row, col] = 0;
+
+        //             if (row == 1 && col == 1)
+        //                 continue;
+
+        //             if (row == 1)
+        //                 MazeMDArray[row, col - 1] = 0;
+
+        //             else if (col == 1)
+        //                 MazeMDArray[row - 1, col] = 0;
+
+        //             else
+        //             {
+        //                 if (rng.Next(2) == 0)
+        //                     MazeMDArray[row - 1, col] = 0;
+        //                 else
+        //                     MazeMDArray[row, col - 1] = 0;
+        //             }
+        //         }
+        //     }
+        // }
         private void CarveBinaryTree(int rows, int cols)
         {
             var rng = new Random();
@@ -136,17 +165,30 @@ namespace Model
                         continue;
 
                     if (row == 1)
+                    {
                         MazeMDArray[row, col - 1] = 0;
-
+                    }
                     else if (col == 1)
+                    {
                         MazeMDArray[row - 1, col] = 0;
-
+                    }
                     else
                     {
-                        if (rng.Next(2) == 0)
-                            MazeMDArray[row - 1, col] = 0;
-                        else
-                            MazeMDArray[row, col - 1] = 0;
+                        int choice = rng.Next(10);
+
+                        if (choice < 4) // 40%
+                        {
+                            MazeMDArray[row - 1, col] = 0; // up
+                        }
+                        else if (choice < 8) // 40%
+                        {
+                            MazeMDArray[row, col - 1] = 0; // left
+                        }
+                        else // 20%
+                        {
+                            MazeMDArray[row - 1, col] = 0; // up
+                            MazeMDArray[row, col - 1] = 0; // left
+                        }
                     }
                 }
             }
