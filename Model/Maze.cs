@@ -79,7 +79,18 @@ namespace Model
                 GenerateFromText(MazeGrids.mazeText);
                 return;
             }
-            End = new int[] { rows - 1, cols - 1 };
+
+            var openCells = new List<int[]>();
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    if (MazeMDArray[i, j] == 0 && !(i == Begin[0] && j == Begin[1]))
+                        openCells.Add(new int[] { i, j });
+                }
+            }
+                Random rng = new Random();
+                End = openCells[rng.Next(openCells.Count)];
 
             MazeMDArray[Begin[0], Begin[1]] = 1;
             MazeMDArray[End[0], End[1]] = 2;
